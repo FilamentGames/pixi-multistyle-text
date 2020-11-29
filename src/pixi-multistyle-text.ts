@@ -39,6 +39,10 @@ interface TextStyle {
   wordWrapWidth?: number;
 }
 
+interface InternalPixiTextStyle extends PIXI.TextStyle {
+  readonly styleID:number;
+}
+
 export interface TextStyleExtended extends TextStyle {
 	valign?: "top" | "middle" | "bottom" | "baseline" | number;
 	debug?: boolean;
@@ -426,7 +430,7 @@ export default class MultiStyleText extends PIXI.Text {
 
   public updateText(respectDirty: boolean): void {
     const privateThis = this.withPrivateMembers();
-    const style = privateThis._style;
+    const style = privateThis._style as InternalPixiTextStyle;
 
     // check if style has changed..
     if (privateThis.localStyleID !== style.styleID)
