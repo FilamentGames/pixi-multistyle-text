@@ -143,6 +143,7 @@ interface TextWithPrivateMembers {
   dirty: boolean;
   _texture: PIXI.Texture;
   _style: PIXI.TextStyle;
+  localStyleID:number;
   _onTextureUpdate(): void;
   _generateFillStyle(style: object, lines: string[]): string | number | CanvasGradient;
 }
@@ -423,10 +424,21 @@ export default class MultiStyleText extends PIXI.Text {
     return ((this as unknown) as TextWithPrivateMembers);
   }
 
-  public updateText(): void {
-		if (!this.withPrivateMembers().dirty) {
-			return;
-		}
+  public updateText(respectDirty: boolean): void {
+    const privateThis = this.withPrivateMembers();
+    const style = privateThis._style;
+
+    // check if style has changed..
+    if (privateThis.localStyleID !== style.styleID)
+    {
+      privateThis.dirty = true;
+      privateThis.localStyleID = style.styleID;
+    }
+
+    if (!privateThis.dirty && respectDirty)
+    {
+        return;
+    }
 
 		this.hitboxes = [];
 
